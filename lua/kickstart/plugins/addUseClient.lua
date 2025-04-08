@@ -12,4 +12,4 @@ function _G._add_use_client()
   vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, { '"use client"' })
 end
 
-vim.api.nvim_set_keymap('n', '<leader>nc', ':lua _add_use_client()<CR>', { noremap = true, silent = true, desc = 'Add "use client" to top' })
+vim.api.nvim_set_keymap('n', '<leader>nu', ':lua _add_use_client()<CR>', { noremap = true, silent = true, desc = 'Add "[u]se client" to top' })
