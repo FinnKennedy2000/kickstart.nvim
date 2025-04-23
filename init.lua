@@ -946,7 +946,14 @@ require('lazy').setup({
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
+      require('mini.completion').setup()
 
+      require('mini.pairs').setup()
+      require('mini.move').setup()
+      require('mini.cursorword').setup()
+      require('mini.trailspace').setup()
+      require('mini.starter').setup()
+      require('mini.comment').setup()
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -1004,7 +1011,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'kickstart.plugins.gitTerminal',
