@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -743,49 +743,6 @@ require('lazy').setup({
       }
     end,
   },
-
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    event = { 'BufWritePre' },
-    cmd = { 'ConformInfo' },
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        local disable_filetypes = { c = true, cpp = true }
-        if disable_filetypes[vim.bo[bufnr].filetype] then
-          return nil
-        else
-          return {
-            timeout_ms = 500,
-            lsp_format = 'fallback',
-          }
-        end
-      end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        php = { 'php-cs-fixer' },
-      },
-      formatters = {
-        ['php-cs-fixer'] = {
-          command = 'php-cs-fixer',
-          args = { 'fix', '--quiet', '--using-cache=no', '--stdin-path', '$FILENAME', '-' },
-          stdin = true,
-        },
-      },
-    },
-  },
-
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -927,8 +884,64 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
+  {
+    'folke/todo-comments.nvim',
+    lazy = false,
+    event = 'BufEnter',
+    opts = {
+      signs = true, -- show icons in the signs column
+      sign_priority = 8, -- sign priority
+      -- keywords recognized as todo comments
+      keywords = {
+        FIX = {
+          alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' }, -- a set of other keywords that all map to this FIX keywords
+        },
+        WARN = { alt = { 'WARNING' } },
+        PERF = { alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } },
+      },
+      highlight = {
+        before = '', -- "fg" or "bg" or empty
+        keyword = 'wide', -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
+        after = 'fg', -- "fg" or "bg" or empty
+        pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
+        comments_only = true, -- uses treesitter to match keywords in comments only
+        max_line_len = 400, -- ignore lines longer than this
+        exclude = {}, -- list of file types to exclude highlighting
+      },
+    },
+    keys = {
+      {
+        '<leader>st',
+        function()
+          Snacks.picker.todo_comments()
+        end,
+        desc = 'Todo',
+      },
+      {
+        '<leader>sT',
+        function()
+          Snacks.picker.todo_comments { keywords = { 'TODO', 'FIX', 'FIXME' } }
+        end,
+        desc = 'Todo/Fix/Fixme',
+      },
+      {
+        'n',
+        ']t',
+        function()
+          require('todo-comments').jump_next()
+        end,
+        { desc = 'Next todo comment' },
+      },
+      {
+        'n',
+        '[t',
+        function()
+          require('todo-comments').jump_prev()
+        end,
+        { desc = 'Previous todo comment' },
+      },
+    },
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -1008,20 +1021,20 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-  require 'kickstart.plugins.gitTerminal',
-  require 'kickstart.plugins.nvimTree',
+  require 'kickstart.plugins.toggleTerm',
+  -- require 'custom.plugins.blankline',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -1048,7 +1061,6 @@ require('lazy').setup({
     },
   },
 })
-
-require 'kickstart.plugins.addUseClient'
+require 'custom.functions.addUseClient'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
