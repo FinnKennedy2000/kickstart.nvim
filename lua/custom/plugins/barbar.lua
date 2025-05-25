@@ -45,12 +45,7 @@ return {{
         map('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
         map('n', '<C-s-p>', '<Cmd>BufferPickDelete<CR>', opts)
 
-        -- Sort automatically by...
-        map('n', '<Space>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
-        map('n', '<Space>bn', '<Cmd>BufferOrderByName<CR>', opts)
-        map('n', '<Space>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)
-        map('n', '<Space>bl', '<Cmd>BufferOrderByLanguage<CR>', opts)
-        map('n', '<Space>bw', '<Cmd>BufferOrderByWindowNumber<CR>', opts)
+     
     end,
     opts = {
         -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
